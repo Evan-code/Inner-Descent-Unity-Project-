@@ -12,7 +12,7 @@ public class MainMenuUI : MonoBehaviour
    {
        // Load a scene called "GameScene"
        // The scene must exist in the Build Settings for this to work
-       SceneManager.LoadScene("GameScene");
+       SceneManager.LoadScene("Square Room");
    }
 
    // This function runs when the player presses the "Quit Game" button
