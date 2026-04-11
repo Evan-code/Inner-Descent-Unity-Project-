@@ -330,13 +330,13 @@ GameObject:
   - component: {fileID: 537010275851264390}
   - component: {fileID: 5419038227598334282}
   - component: {fileID: 2119121861430879584}
-  - component: {fileID: 1392562945825272630}
   - component: {fileID: 6442814295854229023}
   - component: {fileID: 8821680161846393830}
   - component: {fileID: 2469835506887575495}
   - component: {fileID: 6117330558269515530}
   - component: {fileID: 5037759710611263686}
   - component: {fileID: 154969988012790939}
+  - component: {fileID: 6216494231094171230}
   m_Layer: 6
   m_Name: StarFish
   m_TagString: Enemy
@@ -405,23 +405,6 @@ NavMeshAgent:
   m_BaseOffset: 0
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
---- !u!114 &1392562945825272630
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2012999869440015121}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7506b75d88a2384428f5ef5996f5978a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  detectionRange: 20
-  attackRange: 2
-  attackCooldown: 1
-  damage: 1
-  faceSpeed: 100
 --- !u!114 &6442814295854229023
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -545,8 +528,27 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   projectilePrefab: {fileID: 8307327917210871340, guid: 85760a39e6f4b32468e58b6165544a20, type: 3}
   shootCooldown: 2
-  projectileSpeed: 100
+  projectileSpeed: 10
   spawnOffset: 1
+--- !u!114 &6216494231094171230
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2012999869440015121}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 67b4cf9dea8726641ad2036ce9fb273e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  detectionRange: 15
+  shootRange: 8
+  retreatRange: 4
+  retreatDistance: 6
+  attackCooldown: 1.5
+  damage: 1
+  faceSpeed: 100
 --- !u!1 &2408664906258127341
 GameObject:
   m_ObjectHideFlags: 0

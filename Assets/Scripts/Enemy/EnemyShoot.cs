@@ -1,26 +1,22 @@
 using UnityEngine;
 
-// This script makes an enemy shoot toward the player automatically.
-// The bullet spawns slightly in front of the enemy using an offset.
+// This script handles only projectile firing.
+// EnemyAI should decide WHEN to call Shoot().
 public class EnemyShoot : MonoBehaviour
 {
     [Header("References")]
-    private Transform player; // Found automatically using tag
+    private Transform player;
 
     [SerializeField] private GameObject projectilePrefab;
 
-    [Header("Shooting Settings")]
-    [SerializeField] private float shootCooldown = 2f;
+    [Header("Projectile Settings")]
     [SerializeField] private float projectileSpeed = 10f;
 
     [Header("Spawn Offset")]
-    [SerializeField] private float spawnOffset = 1f; // How far in front of enemy the bullet spawns
-
-    private float nextShootTime = 0f;
+    [SerializeField] private float spawnOffset = 1f;
 
     void Start()
     {
-        // Find player using tag
         GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
 
         if (playerObj != null)
@@ -33,39 +29,26 @@ public class EnemyShoot : MonoBehaviour
         }
     }
 
-    void Update()
+    public void Shoot()
     {
         if (player == null)
-            return;
-
-        if (Time.time >= nextShootTime)
         {
-            Shoot();
-            nextShootTime = Time.time + shootCooldown;
+            Debug.LogWarning("EnemyShoot: Player is missing.");
+            return;
         }
-    }
 
-    void Shoot()
-    {
         if (projectilePrefab == null)
         {
             Debug.LogWarning("EnemyShoot: projectilePrefab is not assigned.");
             return;
         }
 
-        // Direction from enemy to player
         Vector3 direction = (player.position - transform.position).normalized;
 
-        // Offset spawn position forward so bullet doesn't spawn inside enemy
         Vector3 spawnPosition = transform.position + direction * spawnOffset;
 
-        // Spawn projectile
-        GameObject projectile = Instantiate(projectilePrefab, spawnPosition, Quaternion.identity);
+        GameObject projectile = Instantiate(projectilePrefab, spawnPosition, Quaternion.LookRotation(direction));
 
-        // Rotate projectile to face direction
-        projectile.transform.forward = direction;
-
-        // Move projectile using Rigidbody
         Rigidbody rb = projectile.GetComponent<Rigidbody>();
 
         if (rb != null)

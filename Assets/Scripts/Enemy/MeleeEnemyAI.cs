@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEngine.AI;
 
 [RequireComponent(typeof(NavMeshAgent))]
-public class EnemyAI : MonoBehaviour
+public class MeleeEnemyAI : MonoBehaviour
 {
     [Header("Detection")]
     public float detectionRange = 12f;
