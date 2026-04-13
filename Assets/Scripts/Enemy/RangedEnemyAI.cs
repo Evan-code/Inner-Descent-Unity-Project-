@@ -158,7 +158,7 @@ public class RangedEnemyAI : MonoBehaviour
             return;
         }
 
-        Vector3 runDirection = (transform.position - player.position).normalized;
+        Vector3 runDirection = (transform.position - player.position);
         Vector3 retreatTarget = transform.position + runDirection * retreatDistance;
 
         NavMeshHit hit;
