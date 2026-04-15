@@ -1,28 +1,56 @@
-using System.Collections;      // Lets us use basic Unity features
-using System.Collections.Generic; 
-using UnityEngine;             // Needed for all Unity scripts
+using System.Collections;
+using UnityEngine;
 
-// This script destroys the object when its health reaches 0
+// This script plays a death animation before destroying the object.
 public class DieOnZero : MonoBehaviour
 {
-   private Health health;  // This will store the Health script on this object
-   public Animator animator;
+    private Health health;
+    public Animator animator;
 
-   void Start()
-   {
-       // Find the Health script attached to THIS object
-       health = GetComponent<Health>();
+    [SerializeField] private float destroyDelay = 1.5f;
 
-       // When the Health script says "I died",
-       // run the Die() function below
-       health.OnDied += Die;
-   }
+    void Start()
+    {
+        health = GetComponent<Health>();
 
-   void Die()
-   {
-        animator.SetTrigger("Die");
-        Destroy(gameObject); // Destroy object after 2 seconds
-   }
+        if (health != null)
+        {
+            health.OnDied += Die;
+        }
+    }
 
+    void OnDestroy()
+    {
+        if (health != null)
+        {
+            health.OnDied -= Die;
+        }
+    }
+
+    void Die()
+    {
+        StartCoroutine(DieRoutine());
+    }
+
+    IEnumerator DieRoutine()
+    {
+        if (animator != null)
+        {
+            animator.SetTrigger("Die");
+        }
+
+        // Disable other behavior so the enemy stops moving/attacking
+        MonoBehaviour[] scripts = GetComponents<MonoBehaviour>();
+        foreach (MonoBehaviour script in scripts)
+        {
+            if (script != this)
+            {
+                script.enabled = false;
+            }
+        }
+
+        yield return new WaitForSeconds(destroyDelay);
+        Destroy(gameObject);
+    }
 }
 
