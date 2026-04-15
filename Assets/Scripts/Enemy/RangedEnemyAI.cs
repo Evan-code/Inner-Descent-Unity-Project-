@@ -1,16 +1,22 @@
 using UnityEngine;
 using UnityEngine.AI;
 
+// This script controls a ranged enemy.
+// It can:
+// - roam around when the player is far away
+// - chase when needed
+// - shoot at medium range
+// - retreat if the player gets too close
 [RequireComponent(typeof(NavMeshAgent))]
 public class RangedEnemyAI : MonoBehaviour
 {
     [Header("Detection")]
     public float detectionRange = 15f;
 
-    [Header("Archer Distances")]
+    [Header("Ranged Distances")]
     public float shootRange = 8f;
     public float retreatRange = 4f;
-    public float retreatDistance = 6f;
+    public float retreatDistance = 5f;
 
     [Header("Attack")]
     public float attackCooldown = 1.5f;
@@ -18,23 +24,30 @@ public class RangedEnemyAI : MonoBehaviour
     [Header("Rotation")]
     public float faceSpeed = 10f;
 
+    [Header("Roaming")]
+    public bool enableRoaming = true;
+    public float roamRadius = 6f;
+    public float roamWaitTime = 2f;
+
     private Transform player;
     private NavMeshAgent agent;
     private Animator animator;
     private EnemyShoot shooter;
+
     private float nextAttackTime;
+    private float roamTimer;
 
     private const string ATTACK_TRIGGER = "Attack";
 
     private enum State
     {
-        Idle,
+        Roam,
         Chase,
         Shoot,
         Retreat
     }
 
-    private State currentState = State.Idle;
+    private State currentState = State.Roam;
 
     void Awake()
     {
@@ -53,8 +66,10 @@ public class RangedEnemyAI : MonoBehaviour
         }
         else
         {
-            Debug.LogWarning("EnemyAI could not find a GameObject tagged 'Player'.");
+            Debug.LogWarning("RangedEnemyAI could not find a GameObject tagged 'Player'.");
         }
+
+        roamTimer = roamWaitTime;
     }
 
     void Update()
@@ -66,8 +81,8 @@ public class RangedEnemyAI : MonoBehaviour
 
         switch (currentState)
         {
-            case State.Idle:
-                HandleIdle(distance);
+            case State.Roam:
+                HandleRoam(distance);
                 break;
 
             case State.Chase:
@@ -86,10 +101,8 @@ public class RangedEnemyAI : MonoBehaviour
         FaceMovementDirection();
     }
 
-    void HandleIdle(float distance)
+    void HandleRoam(float distance)
     {
-        agent.isStopped = true;
-
         if (distance <= detectionRange)
         {
             if (distance < retreatRange)
@@ -98,6 +111,26 @@ public class RangedEnemyAI : MonoBehaviour
                 currentState = State.Shoot;
             else
                 currentState = State.Chase;
+
+            return;
+        }
+
+        if (!enableRoaming)
+        {
+            agent.isStopped = true;
+            return;
+        }
+
+        roamTimer -= Time.deltaTime;
+
+        // If the enemy reached its roam point, wait a bit, then choose another
+        if (!agent.pathPending && agent.remainingDistance <= agent.stoppingDistance)
+        {
+            if (roamTimer <= 0f)
+            {
+                SetRandomRoamDestination();
+                roamTimer = roamWaitTime;
+            }
         }
     }
 
@@ -116,7 +149,8 @@ public class RangedEnemyAI : MonoBehaviour
         }
         else if (distance > detectionRange)
         {
-            currentState = State.Idle;
+            currentState = State.Roam;
+            roamTimer = roamWaitTime;
         }
     }
 
@@ -146,29 +180,32 @@ public class RangedEnemyAI : MonoBehaviour
 
     void HandleRetreat(float distance)
     {
-        if (distance > shootRange)
-        {
-            currentState = State.Chase;
-            return;
-        }
-
+        // If player is no longer too close, go back to shoot/chase logic
         if (distance >= retreatRange && distance <= shootRange)
         {
             currentState = State.Shoot;
             return;
         }
 
-        Vector3 runDirection = (transform.position - player.position);
-        Vector3 retreatTarget = transform.position + runDirection * retreatDistance;
+        if (distance > shootRange)
+        {
+            currentState = State.Chase;
+            return;
+        }
+
+        // Run directly away from the player
+        Vector3 runDirection = (transform.position - player.position).normalized;
+        Vector3 desiredRetreatPoint = transform.position + runDirection * retreatDistance;
 
         NavMeshHit hit;
-        if (NavMesh.SamplePosition(retreatTarget, out hit, 2f, NavMesh.AllAreas))
+        if (NavMesh.SamplePosition(desiredRetreatPoint, out hit, 3f, NavMesh.AllAreas))
         {
             agent.isStopped = false;
             agent.SetDestination(hit.position);
         }
         else
         {
+            // If no retreat point is found, just stop
             agent.isStopped = true;
         }
 
@@ -188,25 +225,25 @@ public class RangedEnemyAI : MonoBehaviour
         }
         else
         {
-            Debug.LogWarning("EnemyAI: No EnemyShoot component found.");
+            Debug.LogWarning("RangedEnemyAI: No EnemyShoot component found.");
         }
     }
 
     void FacePlayer()
     {
-        Vector3 direction = (player.position - transform.position).normalized;
+        Vector3 direction = player.position - transform.position;
         direction.y = 0f;
 
         if (direction.sqrMagnitude > 0.001f)
         {
-            Quaternion targetRotation = Quaternion.LookRotation(direction);
+            Quaternion targetRotation = Quaternion.LookRotation(direction.normalized);
             transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, faceSpeed * Time.deltaTime);
         }
     }
 
     void FaceMovementDirection()
     {
-        if ((currentState == State.Chase || currentState == State.Retreat) && agent.velocity.sqrMagnitude > 0.05f)
+        if (agent.velocity.sqrMagnitude > 0.05f)
         {
             Vector3 direction = agent.velocity.normalized;
             direction.y = 0f;
@@ -216,6 +253,20 @@ public class RangedEnemyAI : MonoBehaviour
                 Quaternion targetRotation = Quaternion.LookRotation(direction);
                 transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, faceSpeed * Time.deltaTime);
             }
+        }
+    }
+
+    void SetRandomRoamDestination()
+    {
+        Vector3 randomDirection = Random.insideUnitSphere * roamRadius;
+        randomDirection += transform.position;
+        randomDirection.y = transform.position.y;
+
+        NavMeshHit hit;
+        if (NavMesh.SamplePosition(randomDirection, out hit, roamRadius, NavMesh.AllAreas))
+        {
+            agent.isStopped = false;
+            agent.SetDestination(hit.position);
         }
     }
 }

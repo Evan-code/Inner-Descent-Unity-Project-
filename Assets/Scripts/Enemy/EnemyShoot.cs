@@ -1,7 +1,7 @@
 using UnityEngine;
 
-// This script handles only projectile firing.
-// EnemyAI should decide WHEN to call Shoot().
+// This script creates and launches projectiles toward the player.
+// The projectile spawns from a shoot point so it does not appear at the enemy's feet.
 public class EnemyShoot : MonoBehaviour
 {
     [Header("References")]
@@ -9,11 +9,11 @@ public class EnemyShoot : MonoBehaviour
 
     [SerializeField] private GameObject projectilePrefab;
 
-    [Header("Projectile Settings")]
-    [SerializeField] private float projectileSpeed = 10f;
+    [Header("Optional Shoot Point")]
+    [SerializeField] private Transform shootPoint;
 
-    [Header("Spawn Offset")]
-    [SerializeField] private float spawnOffset = 1f;
+    [Header("Projectile Settings")]
+    [SerializeField] private float spawnForwardOffset = 0.3f;
 
     void Start()
     {
@@ -43,21 +43,36 @@ public class EnemyShoot : MonoBehaviour
             return;
         }
 
-        Vector3 direction = (player.position - transform.position).normalized;
+        // Use shoot point if assigned. Otherwise fall back to enemy position slightly above center.
+        Vector3 origin;
 
-        Vector3 spawnPosition = transform.position + direction * spawnOffset;
-
-        GameObject projectile = Instantiate(projectilePrefab, spawnPosition, Quaternion.LookRotation(direction));
-
-        Rigidbody rb = projectile.GetComponent<Rigidbody>();
-
-        if (rb != null)
+        if (shootPoint != null)
         {
-            rb.velocity = direction * projectileSpeed;
+            origin = shootPoint.position;
         }
         else
         {
-            Debug.LogWarning("EnemyShoot: Projectile has no Rigidbody.");
+            origin = transform.position + Vector3.up * 1.2f;
+        }
+
+        Vector3 direction = (player.position + Vector3.up * 1f - origin).normalized;
+        Vector3 spawnPosition = origin + direction * spawnForwardOffset;
+
+        GameObject projectileObject = Instantiate(
+            projectilePrefab,
+            spawnPosition,
+            Quaternion.LookRotation(direction)
+        );
+
+        Bullet bullet = projectileObject.GetComponent<Bullet>();
+
+        if (bullet != null)
+        {
+            bullet.SetDirection(direction);
+        }
+        else
+        {
+            Debug.LogWarning("EnemyShoot: Spawned projectile is missing the Bullet script.");
         }
     }
 }

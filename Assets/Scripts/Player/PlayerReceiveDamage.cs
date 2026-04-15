@@ -1,7 +1,9 @@
 using System.Collections;
 using UnityEngine;
 
-// Lets the player take damage, flash, and become temporarily invincible
+// This script lets the player take damage,
+// flash when hit,
+// and become briefly invincible.
 public class PlayerReceiveDamage : MonoBehaviour
 {
     private Health health;
@@ -20,9 +22,17 @@ public class PlayerReceiveDamage : MonoBehaviour
         renderers = GetComponentsInChildren<Renderer>();
 
         originalColors = new Color[renderers.Length];
+
         for (int i = 0; i < renderers.Length; i++)
         {
-            originalColors[i] = renderers[i].material.color;
+            Material mat = renderers[i].material;
+
+            if (mat.HasProperty("_BaseColor"))
+                originalColors[i] = mat.GetColor("_BaseColor");
+            else if (mat.HasProperty("_Color"))
+                originalColors[i] = mat.GetColor("_Color");
+            else
+                originalColors[i] = Color.white;
         }
     }
 
@@ -43,22 +53,34 @@ public class PlayerReceiveDamage : MonoBehaviour
     {
         isInvulnerable = true;
 
+        // Flash to hit color
         for (int i = 0; i < renderers.Length; i++)
         {
-            if (renderers[i] != null)
-            {
-                renderers[i].material.color = flashColor;
-            }
+            if (renderers[i] == null)
+                continue;
+
+            Material mat = renderers[i].material;
+
+            if (mat.HasProperty("_BaseColor"))
+                mat.SetColor("_BaseColor", flashColor);
+            else if (mat.HasProperty("_Color"))
+                mat.SetColor("_Color", flashColor);
         }
 
         yield return new WaitForSeconds(flashDuration);
 
+        // Return to original color
         for (int i = 0; i < renderers.Length; i++)
         {
-            if (renderers[i] != null)
-            {
-                renderers[i].material.color = originalColors[i];
-            }
+            if (renderers[i] == null)
+                continue;
+
+            Material mat = renderers[i].material;
+
+            if (mat.HasProperty("_BaseColor"))
+                mat.SetColor("_BaseColor", originalColors[i]);
+            else if (mat.HasProperty("_Color"))
+                mat.SetColor("_Color", originalColors[i]);
         }
 
         float remainingTime = Mathf.Max(0f, invulnerabilityDuration - flashDuration);
