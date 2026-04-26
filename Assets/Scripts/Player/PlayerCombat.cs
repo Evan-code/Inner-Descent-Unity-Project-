@@ -35,9 +35,37 @@ public class PlayerCombat : MonoBehaviour
             attackSlowTimer -= Time.deltaTime;
         }
 
+        // Keep facing the mouse during the entire attack animation
+        if (isAttacking)
+        {
+            FaceMouse();
+        }
+
         if (Input.GetMouseButtonDown(0) && Time.time >= nextAttackTime && !isAttacking)
         {
             StartCoroutine(AttackRoutine());
+        }
+    }
+
+    void FaceMouse()
+    {
+        if (Camera.main == null)
+            return;
+
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        Plane groundPlane = new Plane(Vector3.up, transform.position);
+
+        if (groundPlane.Raycast(ray, out float distance))
+        {
+            Vector3 mouseWorldPosition = ray.GetPoint(distance);
+
+            Vector3 direction = mouseWorldPosition - transform.position;
+            direction.y = 0f;
+
+            if (direction.sqrMagnitude > 0.0001f)
+            {
+                transform.forward = direction.normalized;
+            }
         }
     }
 
@@ -46,6 +74,8 @@ public class PlayerCombat : MonoBehaviour
         isAttacking = true;
         nextAttackTime = Time.time + attackCooldown;
         attackSlowTimer = attackSlowDuration;
+
+        FaceMouse();
 
         if (animator != null)
         {
@@ -57,6 +87,7 @@ public class PlayerCombat : MonoBehaviour
         Attack();
 
         float remainingAttackTime = attackDuration - hitDelay;
+
         if (remainingAttackTime > 0f)
         {
             yield return new WaitForSeconds(remainingAttackTime);
@@ -95,25 +126,21 @@ public class PlayerCombat : MonoBehaviour
         Gizmos.DrawWireSphere(meleePoint.position, attackRadius);
     }
 
-     // Lets other scripts change the player's attack damage
     public void SetDamage(int newDamage)
     {
         damage = newDamage;
     }
 
-    // Lets other scripts read the player's current damage
     public int GetDamage()
     {
         return damage;
     }
 
-    // Lets other scripts change attack cooldown
     public void SetAttackCooldown(float newCooldown)
     {
         attackCooldown = newCooldown;
     }
 
-    // Lets other scripts read attack cooldown
     public float GetAttackCooldown()
     {
         return attackCooldown;
