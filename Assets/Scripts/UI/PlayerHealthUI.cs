@@ -1,15 +1,21 @@
+using System.Collections;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-// This script updates the player's screen health bar and health text.
-// Example display: 50 / 100
 public class PlayerHealthUI : MonoBehaviour
 {
     [Header("References")]
     [SerializeField] private Health playerHealth;
     [SerializeField] private Image fillImage;
+    [SerializeField] private Image whiteDamageImage;
     [SerializeField] private TMP_Text healthText;
+
+    [Header("White Damage Bar")]
+    [SerializeField] private float waitBeforeShrink = 0.3f;
+    [SerializeField] private float shrinkSpeed = 1.5f;
+
+    private Coroutine damageBarRoutine;
 
     void Start()
     {
@@ -28,10 +34,6 @@ public class PlayerHealthUI : MonoBehaviour
             playerHealth.OnHealthChanged += UpdateUI;
             UpdateUI(playerHealth.currentHP, playerHealth.maxHP);
         }
-        else
-        {
-            Debug.LogWarning("PlayerHealthUI: Could not find player Health.");
-        }
     }
 
     void OnDestroy()
@@ -44,14 +46,49 @@ public class PlayerHealthUI : MonoBehaviour
 
     void UpdateUI(int currentHP, int maxHP)
     {
+        float newFillAmount = (float)currentHP / maxHP;
+
         if (fillImage != null)
         {
-            fillImage.fillAmount = (float)currentHP / maxHP;
+            fillImage.fillAmount = newFillAmount;
         }
 
         if (healthText != null)
         {
             healthText.text = currentHP + " / " + maxHP;
         }
+
+        if (whiteDamageImage != null)
+        {
+            if (whiteDamageImage.fillAmount < newFillAmount)
+            {
+                whiteDamageImage.fillAmount = newFillAmount;
+            }
+
+            if (damageBarRoutine != null)
+            {
+                StopCoroutine(damageBarRoutine);
+            }
+
+            damageBarRoutine = StartCoroutine(ShrinkWhiteBar(newFillAmount));
+        }
+    }
+
+    IEnumerator ShrinkWhiteBar(float targetAmount)
+    {
+        yield return new WaitForSeconds(waitBeforeShrink);
+
+        while (whiteDamageImage.fillAmount > targetAmount)
+        {
+            whiteDamageImage.fillAmount = Mathf.MoveTowards(
+                whiteDamageImage.fillAmount,
+                targetAmount,
+                shrinkSpeed * Time.deltaTime
+            );
+
+            yield return null;
+        }
+
+        whiteDamageImage.fillAmount = targetAmount;
     }
 }

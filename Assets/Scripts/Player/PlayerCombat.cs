@@ -145,4 +145,14 @@ public class PlayerCombat : MonoBehaviour
     {
         return attackCooldown;
     }
+
+    public void SetAttackRadius(float newRadius)
+    {
+        attackRadius = newRadius;
+    }
+
+    public float GetAttackRadius()
+    {
+        return attackRadius;
+    }
 }
