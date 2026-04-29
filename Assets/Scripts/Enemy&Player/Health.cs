@@ -28,6 +28,8 @@ public class Health : MonoBehaviour
 
         isDead = false;
 
+        PlayerRunData.SaveHealth(currentHP);
+
         OnHealthChanged?.Invoke(currentHP, maxHP);
     }
 
@@ -38,16 +40,20 @@ public class Health : MonoBehaviour
         currentHP -= amount;
         currentHP = Mathf.Clamp(currentHP, 0, maxHP);
 
-        PlayerRunData.savedCurrentHP = currentHP;
-        PlayerRunData.hasSavedHealth = true;
-
         OnHealthChanged?.Invoke(currentHP, maxHP);
 
-        if (currentHP <= 0)
+        // Save health ONLY if still alive
+        if (currentHP > 0)
+        {
+            PlayerRunData.SaveHealth(currentHP);
+        }
+
+        // 🔥 DEATH TRIGGER
+        if (currentHP <= 0 && !isDead)
         {
             isDead = true;
 
-            OnDied?.Invoke();
+            OnDied?.Invoke(); // ← THIS triggers death screen
 
             if (destroyOnDeath)
             {
@@ -63,8 +69,7 @@ public class Health : MonoBehaviour
         currentHP += amount;
         currentHP = Mathf.Clamp(currentHP, 0, maxHP);
 
-        PlayerRunData.savedCurrentHP = currentHP;
-        PlayerRunData.hasSavedHealth = true;
+        PlayerRunData.SaveHealth(currentHP);
 
         OnHealthChanged?.Invoke(currentHP, maxHP);
     }

@@ -837,11 +837,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!1 &224576960 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 5306905405478056908, guid: 961bdf6e121dacf45ad7392347fbd8ac, type: 3}
-  m_PrefabInstance: {fileID: 224576953}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &226574853
 GameObject:
   m_ObjectHideFlags: 0
@@ -1003,7 +998,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4bad8a54c0125124ebbc3c7a47ab653c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  upgradeOverlay: {fileID: 224576960}
+  upgradeOverlay: {fileID: 1099976514}
   upgradeButtons:
   - {fileID: 224576959}
   - {fileID: 224576958}
@@ -2175,6 +2170,11 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1098189407}
   m_Mesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1 &1099976514 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5266545532720801507, guid: 961bdf6e121dacf45ad7392347fbd8ac, type: 3}
+  m_PrefabInstance: {fileID: 224576953}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1162197320
 GameObject:
   m_ObjectHideFlags: 0

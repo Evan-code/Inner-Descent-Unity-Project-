@@ -54,6 +54,7 @@ public class PlayerUpgradeApplier : MonoBehaviour
         if (health != null)
         {
             int newMaxHP = baseMaxHP + PlayerRunData.bonusMaxHP;
+
             int newCurrentHP;
 
             if (PlayerRunData.hasSavedHealth)
@@ -66,8 +67,6 @@ public class PlayerUpgradeApplier : MonoBehaviour
             }
 
             health.SetHealth(newCurrentHP, newMaxHP);
-
-            PlayerRunData.SaveHealth(health.currentHP);
         }
 
         if (combat != null)

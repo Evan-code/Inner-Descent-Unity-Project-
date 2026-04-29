@@ -1,17 +1,22 @@
 using System.Collections;
 using UnityEngine;
 
-// This script lets the player take damage,
-// flash when hit,
-// and become briefly invincible.
 public class PlayerReceiveDamage : MonoBehaviour
 {
     private Health health;
     private Renderer[] renderers;
 
+    [Header("Invincibility")]
     [SerializeField] private float invulnerabilityDuration = 1f;
-    [SerializeField] private float flashDuration = 0.1f;
-    [SerializeField] private Color flashColor = new Color32(236, 146, 146, 255);
+
+    [Header("Flashing")]
+    [SerializeField] private float initialFlashDuration = 0.08f;
+    [SerializeField] private float slowFlashInterval = 0.25f;
+    [SerializeField] private Color flashColor = new Color(0.65f, 0.65f, 0.65f, 1f);
+
+    [Header("Screen Shake")]
+    [SerializeField] private float shakeDuration = 0.2f;
+    [SerializeField] private float shakeStrength = 0.25f;
 
     private bool isInvulnerable = false;
     private Color[] originalColors;
@@ -28,20 +33,33 @@ public class PlayerReceiveDamage : MonoBehaviour
             Material mat = renderers[i].material;
 
             if (mat.HasProperty("_BaseColor"))
+            {
                 originalColors[i] = mat.GetColor("_BaseColor");
+            }
             else if (mat.HasProperty("_Color"))
+            {
                 originalColors[i] = mat.GetColor("_Color");
+            }
             else
+            {
                 originalColors[i] = Color.white;
+            }
         }
     }
 
     public void Hit(int damage)
     {
         if (isInvulnerable || health == null)
+        {
             return;
+        }
 
         health.TakeDamage(damage);
+
+        if (ScreenShake.Instance != null)
+        {
+            ScreenShake.Instance.Shake(shakeDuration, shakeStrength);
+        }
 
         if (health.currentHP > 0)
         {
@@ -53,39 +71,64 @@ public class PlayerReceiveDamage : MonoBehaviour
     {
         isInvulnerable = true;
 
-        // Flash to hit color
-        for (int i = 0; i < renderers.Length; i++)
+        float timer = 0f;
+
+        SetPlayerColor(flashColor);
+        yield return new WaitForSeconds(initialFlashDuration);
+        RestoreOriginalColors();
+
+        timer += initialFlashDuration;
+
+        while (timer < invulnerabilityDuration)
         {
-            if (renderers[i] == null)
-                continue;
+            SetPlayerColor(flashColor);
+            yield return new WaitForSeconds(slowFlashInterval);
 
-            Material mat = renderers[i].material;
+            RestoreOriginalColors();
+            yield return new WaitForSeconds(slowFlashInterval);
 
-            if (mat.HasProperty("_BaseColor"))
-                mat.SetColor("_BaseColor", flashColor);
-            else if (mat.HasProperty("_Color"))
-                mat.SetColor("_Color", flashColor);
+            timer += slowFlashInterval * 2f;
         }
 
-        yield return new WaitForSeconds(flashDuration);
-
-        // Return to original color
-        for (int i = 0; i < renderers.Length; i++)
-        {
-            if (renderers[i] == null)
-                continue;
-
-            Material mat = renderers[i].material;
-
-            if (mat.HasProperty("_BaseColor"))
-                mat.SetColor("_BaseColor", originalColors[i]);
-            else if (mat.HasProperty("_Color"))
-                mat.SetColor("_Color", originalColors[i]);
-        }
-
-        float remainingTime = Mathf.Max(0f, invulnerabilityDuration - flashDuration);
-        yield return new WaitForSeconds(remainingTime);
-
+        RestoreOriginalColors();
         isInvulnerable = false;
+    }
+
+    private void SetPlayerColor(Color color)
+    {
+        foreach (Renderer renderer in renderers)
+        {
+            if (renderer == null) continue;
+
+            Material mat = renderer.material;
+
+            if (mat.HasProperty("_BaseColor"))
+            {
+                mat.SetColor("_BaseColor", color);
+            }
+            else if (mat.HasProperty("_Color"))
+            {
+                mat.SetColor("_Color", color);
+            }
+        }
+    }
+
+    private void RestoreOriginalColors()
+    {
+        for (int i = 0; i < renderers.Length; i++)
+        {
+            if (renderers[i] == null) continue;
+
+            Material mat = renderers[i].material;
+
+            if (mat.HasProperty("_BaseColor"))
+            {
+                mat.SetColor("_BaseColor", originalColors[i]);
+            }
+            else if (mat.HasProperty("_Color"))
+            {
+                mat.SetColor("_Color", originalColors[i]);
+            }
+        }
     }
 }
