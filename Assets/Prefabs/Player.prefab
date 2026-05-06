@@ -864,6 +864,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   moveSpeed: 8
   verticalSpeed: 12
+  rotationSpeed: 18
   wallSkin: 0.05
 --- !u!114 &8321248629147718853
 MonoBehaviour:

@@ -160,25 +160,36 @@ public class UpgradeOverlayManager : MonoBehaviour
     // This runs when the player clicks an upgrade
     void SelectUpgrade(UpgradeOption chosenUpgrade)
     {
-        // Apply the upgrade to the player
+        SavePlayerHealthBeforeChangingScene();
+
         ApplyUpgrade(chosenUpgrade);
 
-        // Debug logs to show what's happening (good for testing)
         Debug.Log("Player picked upgrade: " + chosenUpgrade.title);
-        Debug.Log(
-            "Run Data Now -> " +
-            "bonusMaxHP: " + PlayerRunData.bonusMaxHP +
-            ", bonusDamage: " + PlayerRunData.bonusDamage +
-            ", moveSpeedMultiplier: " + PlayerRunData.moveSpeedMultiplier +
-            ", dashCooldownMultiplier: " + PlayerRunData.dashCooldownMultiplier +
-            ", attackCooldownMultiplier: " + PlayerRunData.attackCooldownMultiplier
-        );
 
-        // Unpause the game before switching scenes
         Time.timeScale = 1f;
 
-        // Load the next scene
         SceneManager.LoadScene(nextSceneName);
+    }
+
+    void SavePlayerHealthBeforeChangingScene()
+    {
+        GameObject player = GameObject.FindGameObjectWithTag("Player");
+
+        if (player == null)
+        {
+            Debug.LogWarning("Could not save health because no object has the Player tag.");
+            return;
+        }
+
+        Health health = player.GetComponent<Health>();
+
+        if (health == null)
+        {
+            Debug.LogWarning("Could not save health because the Player has no Health component.");
+            return;
+        }
+
+        PlayerRunData.SaveHealth(health.currentHP);
     }
 
     // This actually changes the player's stats

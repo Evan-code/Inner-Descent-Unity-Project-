@@ -6,6 +6,9 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private float moveSpeed = 5f;
     [SerializeField] private float verticalSpeed = 5f;
 
+    [Header("Smooth Rotation")]
+    [SerializeField] private float rotationSpeed = 12f;
+
     [Header("Wall Collision")]
     [SerializeField] private float wallSkin = 0.05f;
 
@@ -19,18 +22,14 @@ public class PlayerMovement : MonoBehaviour
     void Start()
     {
         if (Camera.main != null)
-        {
             cam = Camera.main.transform;
-        }
 
         anim = GetComponent<Animator>();
         rb = GetComponent<Rigidbody>();
         combat = GetComponent<PlayerCombat>();
 
         if (anim != null)
-        {
             anim.applyRootMotion = false;
-        }
 
         if (rb != null)
         {
@@ -48,9 +47,7 @@ public class PlayerMovement : MonoBehaviour
         if (IsDashing)
         {
             if (anim != null)
-            {
                 anim.SetFloat("Speed", 0f);
-            }
 
             rb.velocity = new Vector3(0f, rb.velocity.y, 0f);
             return;
@@ -64,18 +61,14 @@ public class PlayerMovement : MonoBehaviour
         if (rawInput.sqrMagnitude < 0.0001f)
         {
             if (anim != null)
-            {
                 anim.SetFloat("Speed", 0f);
-            }
 
             rb.velocity = new Vector3(0f, rb.velocity.y, 0f);
             return;
         }
 
         if (anim != null)
-        {
             anim.SetFloat("Speed", 1f);
-        }
 
         Vector3 camForward = cam.forward;
         camForward.y = 0f;
@@ -88,31 +81,39 @@ public class PlayerMovement : MonoBehaviour
         float currentSpeed = moveSpeed;
 
         if (x != 0 && z == 0)
-        {
             currentSpeed = moveSpeed;
-        }
         else if (x == 0 && z != 0)
-        {
             currentSpeed = verticalSpeed;
-        }
         else if (x != 0 && z != 0)
-        {
             currentSpeed = (moveSpeed + verticalSpeed) / 2f;
-        }
 
         if (combat != null && combat.IsAttackSlowed)
-        {
             currentSpeed *= combat.AttackMoveMultiplier;
-        }
 
         Vector3 moveAmount = moveDirection * currentSpeed * Time.fixedDeltaTime;
 
         MoveSafely(moveAmount);
 
-        if (moveDirection.sqrMagnitude > 0.0001f && (combat == null || !combat.IsAttacking))
-        {
-            transform.forward = moveDirection;
-        }
+        SmoothlyRotateToward(moveDirection);
+    }
+
+    void SmoothlyRotateToward(Vector3 moveDirection)
+    {
+        if (moveDirection.sqrMagnitude < 0.0001f)
+            return;
+
+        if (combat != null && combat.IsAttacking)
+            return;
+
+        Quaternion targetRotation = Quaternion.LookRotation(moveDirection, Vector3.up);
+
+        Quaternion smoothRotation = Quaternion.Slerp(
+            rb.rotation,
+            targetRotation,
+            rotationSpeed * Time.fixedDeltaTime
+        );
+
+        rb.MoveRotation(smoothRotation);
     }
 
     void MoveSafely(Vector3 moveAmount)
