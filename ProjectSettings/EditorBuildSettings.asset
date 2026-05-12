@@ -9,7 +9,7 @@ EditorBuildSettings:
     path: Assets/Scenes/MainMenu.unity
     guid: aa9782c6795162b42ab4d55fd882d5ad
   - enabled: 1
-    path: Assets/Scenes/Rooms/Square Room.unity
+    path: Assets/Scenes/Rooms/Square Room (Old).unity
     guid: 0b65965fae5587f4b8254ffaf07c9935
   - enabled: 1
     path: Assets/Scenes/Rooms/Circle Room.unity
