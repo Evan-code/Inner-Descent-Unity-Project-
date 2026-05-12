@@ -580,9 +580,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   detectionRange: 15
-  shootRange: 8
-  retreatRange: 4
-  retreatDistance: 6
+  shootRange: 13
+  retreatRange: 6
+  retreatDistance: 13
   attackCooldown: 1.5
   faceSpeed: 100
   enableRoaming: 1

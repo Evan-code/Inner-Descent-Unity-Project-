@@ -70,6 +70,12 @@ public class PlayerCombat : MonoBehaviour
         if (isAttacking)
             FaceMouse();
 
+        // If the player waits too long, reset the combo sequence.
+        if (!isAttacking && Time.time - lastAttackTime > comboInputWindow)
+        {
+            comboStep = 0;
+        }
+
         if (Input.GetMouseButtonDown(0) && Time.time >= nextAttackTime)
         {
             StartComboAttack();
@@ -80,13 +86,20 @@ public class PlayerCombat : MonoBehaviour
     {
         StopAllCoroutines();
 
-        if (Time.time - lastAttackTime <= comboInputWindow)
-            comboStep++;
-        else
+        // If the combo window expired, restart at Attack1.
+        if (Time.time - lastAttackTime > comboInputWindow)
+        {
             comboStep = 1;
+        }
+        else
+        {
+            comboStep++;
+        }
 
         if (comboStep > 3)
+        {
             comboStep = 1;
+        }
 
         lastAttackTime = Time.time;
         nextAttackTime = Time.time + attackCooldown;
@@ -128,7 +141,6 @@ public class PlayerCombat : MonoBehaviour
         while (timer < hitActiveTime)
         {
             CheckHitbox(damagedEnemies);
-
             timer += Time.deltaTime;
             yield return null;
         }
@@ -136,11 +148,8 @@ public class PlayerCombat : MonoBehaviour
 
     void CheckHitbox(HashSet<EnemyReceiveDamage> damagedEnemies)
     {
-        if (!isAttacking)
-            return;
-
-        if (attackPoint == null)
-            return;
+        if (!isAttacking) return;
+        if (attackPoint == null) return;
 
         Collider[] hits = Physics.OverlapBox(
             attackPoint.position,
@@ -171,7 +180,11 @@ public class PlayerCombat : MonoBehaviour
 
         yield return new WaitForSeconds(delay);
 
-        SpawnAttackVFX(attackNumber);
+        // Prevent old delayed VFX from spawning after attack was cancelled/restarted.
+        if (isAttacking)
+        {
+            SpawnAttackVFX(attackNumber);
+        }
     }
 
     void SpawnAttackVFX(int attackNumber)
@@ -203,8 +216,7 @@ public class PlayerCombat : MonoBehaviour
             scale = attack3VFXScale;
         }
 
-        if (prefab == null)
-            return;
+        if (prefab == null) return;
 
         Vector3 spawnPosition =
             transform.position +
@@ -212,8 +224,7 @@ public class PlayerCombat : MonoBehaviour
             transform.right * offset.x +
             transform.up * offset.y;
 
-        Quaternion spawnRotation =
-            transform.rotation * Quaternion.Euler(rotationOffset);
+        Quaternion spawnRotation = transform.rotation * Quaternion.Euler(rotationOffset);
 
         GameObject vfx = Instantiate(prefab, spawnPosition, spawnRotation);
         vfx.transform.localScale = scale;
@@ -223,8 +234,7 @@ public class PlayerCombat : MonoBehaviour
 
     void FaceMouse()
     {
-        if (Camera.main == null)
-            return;
+        if (Camera.main == null) return;
 
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         Plane groundPlane = new Plane(Vector3.up, transform.position);
@@ -242,8 +252,7 @@ public class PlayerCombat : MonoBehaviour
 
     void OnDrawGizmosSelected()
     {
-        if (attackPoint == null)
-            return;
+        if (attackPoint == null) return;
 
         Gizmos.color = Color.red;
 
