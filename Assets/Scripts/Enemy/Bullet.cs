@@ -1,9 +1,5 @@
 using UnityEngine;
 
-// This script controls an enemy projectile.
-// It moves forward in one direction, ignores gravity,
-// damages the player on contact,
-// and destroys itself if it travels too far or hits something solid.
 [RequireComponent(typeof(Rigidbody))]
 public class Bullet : MonoBehaviour
 {
@@ -13,89 +9,112 @@ public class Bullet : MonoBehaviour
     [Header("Movement")]
     [SerializeField] private float speed = 12f;
     [SerializeField] private float maxTravelDistance = 20f;
+    [SerializeField] private float deleteTime = 5f;
+
+    [Header("Hitbox")]
+    [SerializeField] private float hitboxRadius = 0.35f;
+    [SerializeField] private LayerMask playerMask;
+    [SerializeField] private LayerMask solidMask;
 
     private Rigidbody rb;
     private Vector3 startPosition;
     private Vector3 moveDirection;
+    private bool hasHitPlayer;
 
     void Awake()
     {
         rb = GetComponent<Rigidbody>();
-
-        // Make sure gravity does not affect the bullet
         rb.useGravity = false;
-
-        // Freeze bullet rotation so physics does not make it spin weirdly
         rb.freezeRotation = true;
-
-        // Better collision detection for fast projectiles
         rb.collisionDetectionMode = CollisionDetectionMode.Continuous;
     }
 
     void Start()
     {
-        // Save where the bullet started so we can delete it later
         startPosition = transform.position;
+        Destroy(gameObject, deleteTime);
     }
 
     void Update()
     {
-        // Delete the bullet if it has traveled too far
-        float distanceTravelled = Vector3.Distance(startPosition, transform.position);
-
-        if (distanceTravelled >= maxTravelDistance)
-        {
-            Destroy(gameObject);
-        }
+        CheckPlayerHitbox();
+        CheckMaxDistance();
+        CheckSolidAhead();
     }
 
     void FixedUpdate()
     {
-        // Move the bullet in a straight line every physics frame
         rb.velocity = moveDirection * speed;
     }
 
-    // This is called by EnemyShoot right after the bullet is created
     public void SetDirection(Vector3 direction)
     {
         moveDirection = direction.normalized;
 
-        // Face the direction the bullet is traveling
         if (moveDirection.sqrMagnitude > 0.001f)
-        {
             transform.rotation = Quaternion.LookRotation(moveDirection);
-        }
     }
 
-    // Trigger collision version
-    void OnTriggerEnter(Collider other)
+    public void SetDamage(int newDamage)
     {
-        TryHitObject(other);
+        damage = newDamage;
     }
 
-    // Non-trigger collision version
-    void OnCollisionEnter(Collision collision)
+    void CheckPlayerHitbox()
     {
-        TryHitObject(collision.collider);
-    }
-
-    void TryHitObject(Collider other)
-    {
-        // Ignore other triggers so bullets do not vanish on helper colliders
-        if (other.isTrigger)
+        if (hasHitPlayer)
             return;
 
-        // Check if the bullet hit the player
-        PlayerReceiveDamage playerDamage = other.GetComponentInParent<PlayerReceiveDamage>();
+        Collider[] hits = Physics.OverlapSphere(
+            transform.position,
+            hitboxRadius,
+            playerMask,
+            QueryTriggerInteraction.Ignore
+        );
 
-        if (playerDamage != null)
+        foreach (Collider hit in hits)
         {
-            playerDamage.Hit(damage);
-            Destroy(gameObject);
-            return;
-        }
+            PlayerReceiveDamage playerDamage = hit.GetComponentInParent<PlayerReceiveDamage>();
 
-        // If it hits anything solid that is not the player, destroy it
-        Destroy(gameObject);
+            if (playerDamage != null)
+            {
+                hasHitPlayer = true;
+                playerDamage.Hit(damage);
+                Destroy(gameObject);
+                return;
+            }
+        }
+    }
+
+    void CheckMaxDistance()
+    {
+        if (Vector3.Distance(startPosition, transform.position) >= maxTravelDistance)
+            Destroy(gameObject);
+    }
+
+    void CheckSolidAhead()
+    {
+        if (moveDirection.sqrMagnitude < 0.001f)
+            return;
+
+        float checkDistance = speed * Time.deltaTime;
+
+        if (Physics.SphereCast(
+            transform.position,
+            hitboxRadius,
+            moveDirection,
+            out RaycastHit hit,
+            checkDistance,
+            solidMask,
+            QueryTriggerInteraction.Ignore))
+        {
+            Destroy(gameObject);
+        }
+    }
+
+    void OnDrawGizmosSelected()
+    {
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(transform.position, hitboxRadius);
     }
 }

@@ -28,35 +28,21 @@ public class PlayerCombat : MonoBehaviour
     public float attackSlowDuration = 0.45f;
     public float attackMoveMultiplier = 0.35f;
 
-    [Header("Attack 1 VFX")]
-    public GameObject attack1VFX;
-    public Vector3 attack1VFXOffset;
-    public Vector3 attack1VFXRotation;
-    public Vector3 attack1VFXScale = Vector3.one;
-
-    [Header("Attack 2 VFX")]
-    public GameObject attack2VFX;
-    public Vector3 attack2VFXOffset;
-    public Vector3 attack2VFXRotation;
-    public Vector3 attack2VFXScale = Vector3.one;
-
-    [Header("Attack 3 VFX")]
-    public GameObject attack3VFX;
-    public Vector3 attack3VFXOffset;
-    public Vector3 attack3VFXRotation;
-    public Vector3 attack3VFXScale = Vector3.one;
-
-    [Header("VFX Settings")]
-    public float vfxLifetime = 1.5f;
+    [Header("Attack VFX")]
+    public ParticleSystem attack1VFX;
+    public ParticleSystem attack2VFX;
+    public ParticleSystem attack3VFX;
 
     [Header("Animation")]
     public Animator animator;
 
-    private int comboStep = 0;
+    private int comboStep;
+    private int attackId;
     private float lastAttackTime = -999f;
-    private float nextAttackTime = 0f;
-    private float attackSlowTimer = 0f;
-    private bool isAttacking = false;
+    private float nextAttackTime;
+    private float attackSlowTimer;
+    private bool isAttacking;
+    private Coroutine attackRoutine;
 
     public bool IsAttacking => isAttacking;
     public bool IsAttackSlowed => attackSlowTimer > 0f;
@@ -67,78 +53,104 @@ public class PlayerCombat : MonoBehaviour
         if (attackSlowTimer > 0f)
             attackSlowTimer -= Time.deltaTime;
 
+        if (Time.time - lastAttackTime > comboInputWindow)
+            comboStep = 0;
+
         if (isAttacking)
             FaceMouse();
 
-        // If the player waits too long, reset the combo sequence.
-        if (!isAttacking && Time.time - lastAttackTime > comboInputWindow)
-        {
-            comboStep = 0;
-        }
-
         if (Input.GetMouseButtonDown(0) && Time.time >= nextAttackTime)
-        {
             StartComboAttack();
-        }
     }
 
     void StartComboAttack()
     {
-        StopAllCoroutines();
+        attackId++;
 
-        // If the combo window expired, restart at Attack1.
-        if (Time.time - lastAttackTime > comboInputWindow)
-        {
-            comboStep = 1;
-        }
-        else
-        {
-            comboStep++;
-        }
+        comboStep = Time.time - lastAttackTime > comboInputWindow ? 1 : comboStep + 1;
 
         if (comboStep > 3)
-        {
             comboStep = 1;
-        }
 
         lastAttackTime = Time.time;
         nextAttackTime = Time.time + attackCooldown;
 
-        StartCoroutine(AttackRoutine(comboStep));
+        if (attackRoutine != null)
+            StopCoroutine(attackRoutine);
+
+        attackRoutine = StartCoroutine(AttackRoutine(comboStep, attackId));
     }
 
-    IEnumerator AttackRoutine(int attackNumber)
+    IEnumerator AttackRoutine(int attackNumber, int id)
     {
         isAttacking = true;
         attackSlowTimer = attackSlowDuration;
 
         FaceMouse();
+        PlayAnimation(attackNumber);
 
-        if (animator != null)
-        {
-            animator.ResetTrigger("Attack1");
-            animator.ResetTrigger("Attack2");
-            animator.ResetTrigger("Attack3");
-
-            animator.SetTrigger("Attack" + attackNumber);
-        }
-
-        StartCoroutine(DelayedVFX(attackNumber));
-        StartCoroutine(ActiveDamageWindow());
+        StartCoroutine(DelayedVFX(attackNumber, id));
+        StartCoroutine(DamageWindow(id));
 
         yield return new WaitForSeconds(attackDuration);
 
-        isAttacking = false;
+        if (id == attackId)
+        {
+            isAttacking = false;
+            attackRoutine = null;
+        }
     }
 
-    IEnumerator ActiveDamageWindow()
+    void PlayAnimation(int attackNumber)
+    {
+        if (animator == null)
+            return;
+
+        animator.ResetTrigger("Attack1");
+        animator.ResetTrigger("Attack2");
+        animator.ResetTrigger("Attack3");
+        animator.SetTrigger("Attack" + attackNumber);
+    }
+
+    IEnumerator DelayedVFX(int attackNumber, int id)
+    {
+        yield return new WaitForSeconds(GetVFXDelay(attackNumber));
+
+        if (id == attackId)
+            PlayVFX(GetVFX(attackNumber));
+    }
+
+    void PlayVFX(ParticleSystem vfx)
+    {
+        if (vfx == null)
+            return;
+
+        vfx.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+        vfx.Play();
+    }
+
+    ParticleSystem GetVFX(int attackNumber)
+    {
+        if (attackNumber == 1) return attack1VFX;
+        if (attackNumber == 2) return attack2VFX;
+        return attack3VFX;
+    }
+
+    float GetVFXDelay(int attackNumber)
+    {
+        if (attackNumber == 1) return attack1VFXDelay;
+        if (attackNumber == 2) return attack2VFXDelay;
+        return attack3VFXDelay;
+    }
+
+    IEnumerator DamageWindow(int id)
     {
         yield return new WaitForSeconds(hitStartDelay);
 
         float timer = 0f;
         HashSet<EnemyReceiveDamage> damagedEnemies = new HashSet<EnemyReceiveDamage>();
 
-        while (timer < hitActiveTime)
+        while (timer < hitActiveTime && id == attackId)
         {
             CheckHitbox(damagedEnemies);
             timer += Time.deltaTime;
@@ -148,8 +160,8 @@ public class PlayerCombat : MonoBehaviour
 
     void CheckHitbox(HashSet<EnemyReceiveDamage> damagedEnemies)
     {
-        if (!isAttacking) return;
-        if (attackPoint == null) return;
+        if (attackPoint == null)
+            return;
 
         Collider[] hits = Physics.OverlapBox(
             attackPoint.position,
@@ -160,89 +172,24 @@ public class PlayerCombat : MonoBehaviour
 
         foreach (Collider hit in hits)
         {
-            EnemyReceiveDamage enemyDamage = hit.GetComponentInParent<EnemyReceiveDamage>();
+            EnemyReceiveDamage enemy = hit.GetComponentInParent<EnemyReceiveDamage>();
 
-            if (enemyDamage != null && !damagedEnemies.Contains(enemyDamage))
-            {
-                enemyDamage.Hit(damage);
-                damagedEnemies.Add(enemyDamage);
-            }
+            if (enemy != null && damagedEnemies.Add(enemy))
+                enemy.Hit(damage);
         }
-    }
-
-    IEnumerator DelayedVFX(int attackNumber)
-    {
-        float delay = 0f;
-
-        if (attackNumber == 1) delay = attack1VFXDelay;
-        if (attackNumber == 2) delay = attack2VFXDelay;
-        if (attackNumber == 3) delay = attack3VFXDelay;
-
-        yield return new WaitForSeconds(delay);
-
-        // Prevent old delayed VFX from spawning after attack was cancelled/restarted.
-        if (isAttacking)
-        {
-            SpawnAttackVFX(attackNumber);
-        }
-    }
-
-    void SpawnAttackVFX(int attackNumber)
-    {
-        GameObject prefab = null;
-        Vector3 offset = Vector3.zero;
-        Vector3 rotationOffset = Vector3.zero;
-        Vector3 scale = Vector3.one;
-
-        if (attackNumber == 1)
-        {
-            prefab = attack1VFX;
-            offset = attack1VFXOffset;
-            rotationOffset = attack1VFXRotation;
-            scale = attack1VFXScale;
-        }
-        else if (attackNumber == 2)
-        {
-            prefab = attack2VFX;
-            offset = attack2VFXOffset;
-            rotationOffset = attack2VFXRotation;
-            scale = attack2VFXScale;
-        }
-        else if (attackNumber == 3)
-        {
-            prefab = attack3VFX;
-            offset = attack3VFXOffset;
-            rotationOffset = attack3VFXRotation;
-            scale = attack3VFXScale;
-        }
-
-        if (prefab == null) return;
-
-        Vector3 spawnPosition =
-            transform.position +
-            transform.forward * offset.z +
-            transform.right * offset.x +
-            transform.up * offset.y;
-
-        Quaternion spawnRotation = transform.rotation * Quaternion.Euler(rotationOffset);
-
-        GameObject vfx = Instantiate(prefab, spawnPosition, spawnRotation);
-        vfx.transform.localScale = scale;
-
-        Destroy(vfx, vfxLifetime);
     }
 
     void FaceMouse()
     {
-        if (Camera.main == null) return;
+        if (Camera.main == null)
+            return;
 
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-        Plane groundPlane = new Plane(Vector3.up, transform.position);
+        Plane ground = new Plane(Vector3.up, transform.position);
 
-        if (groundPlane.Raycast(ray, out float distance))
+        if (ground.Raycast(ray, out float distance))
         {
-            Vector3 mouseWorldPosition = ray.GetPoint(distance);
-            Vector3 direction = mouseWorldPosition - transform.position;
+            Vector3 direction = ray.GetPoint(distance) - transform.position;
             direction.y = 0f;
 
             if (direction.sqrMagnitude > 0.0001f)
@@ -252,40 +199,23 @@ public class PlayerCombat : MonoBehaviour
 
     void OnDrawGizmosSelected()
     {
-        if (attackPoint == null) return;
+        if (attackPoint == null)
+            return;
 
         Gizmos.color = Color.red;
 
         Matrix4x4 oldMatrix = Gizmos.matrix;
-
-        Gizmos.matrix = Matrix4x4.TRS(
-            attackPoint.position,
-            attackPoint.rotation,
-            Vector3.one
-        );
-
+        Gizmos.matrix = Matrix4x4.TRS(attackPoint.position, attackPoint.rotation, Vector3.one);
         Gizmos.DrawWireCube(Vector3.zero, hitboxSize);
-
         Gizmos.matrix = oldMatrix;
     }
 
-    public void SetDamage(int newDamage)
-    {
-        damage = newDamage;
-    }
+    public void SetDamage(int newDamage) => damage = newDamage;
+    public int GetDamage() => damage;
 
-    public int GetDamage()
-    {
-        return damage;
-    }
+    public void SetAttackCooldown(float newCooldown) => attackCooldown = newCooldown;
+    public float GetAttackCooldown() => attackCooldown;
 
-    public void SetAttackCooldown(float newCooldown)
-    {
-        attackCooldown = newCooldown;
-    }
-
-    public float GetAttackCooldown()
-    {
-        return attackCooldown;
-    }
+    public void SetAttackRange(float newRange) => hitboxSize.z = newRange;
+    public float GetAttackRange() => hitboxSize.z;
 }
