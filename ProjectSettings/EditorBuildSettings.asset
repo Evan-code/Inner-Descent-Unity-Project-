@@ -9,9 +9,6 @@ EditorBuildSettings:
     path: Assets/Scenes/MainMenu.unity
     guid: aa9782c6795162b42ab4d55fd882d5ad
   - enabled: 1
-    path: Assets/Scenes/Rooms/Square Room (Old).unity
-    guid: 0b65965fae5587f4b8254ffaf07c9935
-  - enabled: 1
     path: Assets/Scenes/Rooms/Circle Room.unity
     guid: d8708dc375f64ff40914af79fa927845
   - enabled: 1
@@ -20,5 +17,8 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Rooms/Bridge Room.unity
     guid: 6791a8e067e49d94f855127dfe9144c8
+  - enabled: 1
+    path: Assets/Scenes/Rooms/Square Room.unity
+    guid: c46c3801ceb500940ad0d8d71b85c952
   m_configObjects: {}
   m_UseUCBPForAssetBundles: 0
