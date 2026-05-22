@@ -599,12 +599,12 @@ GameObject:
   - component: {fileID: 6673704646705357530}
   - component: {fileID: 2843924611049113428}
   - component: {fileID: 226789121065483469}
+  - component: {fileID: 8758657234529656389}
+  - component: {fileID: 6986909752335183499}
   - component: {fileID: 1358106724037766070}
   - component: {fileID: 1972606470381268247}
-  - component: {fileID: 8758657234529656389}
-  - component: {fileID: 7937914154850460890}
-  - component: {fileID: 6986909752335183499}
   - component: {fileID: 7979888880650347857}
+  - component: {fileID: 7937914154850460890}
   m_Layer: 6
   m_Name: AngrySlime
   m_TagString: Enemy
@@ -675,41 +675,6 @@ NavMeshAgent:
   m_BaseOffset: 0
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
---- !u!114 &1358106724037766070
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5540324501335875313}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7506b75d88a2384428f5ef5996f5978a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  detectionRange: 15
-  attackRange: 2
-  attackCooldown: 1
-  damage: 4
-  faceSpeed: 100
-  enableRoaming: 1
-  roamRadius: 6
-  roamWaitTime: 2
---- !u!114 &1972606470381268247
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5540324501335875313}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ec299ff5abd5d4547a2fe266b51986a0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  maxHP: 5
-  currentHP: 0
-  destroyOnDeath: 0
 --- !u!136 &8758657234529656389
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -733,20 +698,6 @@ CapsuleCollider:
   m_Height: 1
   m_Direction: 1
   m_Center: {x: 0, y: 0.7, z: 0}
---- !u!114 &7937914154850460890
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5540324501335875313}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 739261aec670e66419845ee2e78af045, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  animator: {fileID: 2843924611049113428}
-  destroyDelay: 1.5
 --- !u!23 &6986909752335183499
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -791,6 +742,41 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!114 &1358106724037766070
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5540324501335875313}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7506b75d88a2384428f5ef5996f5978a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  detectionRange: 15
+  attackRange: 2
+  attackCooldown: 1
+  damage: 4
+  faceSpeed: 100
+  enableRoaming: 1
+  roamRadius: 20
+  roamWaitTime: 0
+--- !u!114 &1972606470381268247
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5540324501335875313}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ec299ff5abd5d4547a2fe266b51986a0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxHP: 5
+  currentHP: 0
+  destroyOnDeath: 0
 --- !u!114 &7979888880650347857
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -808,6 +794,20 @@ MonoBehaviour:
   damageNumberPrefab: {fileID: 4414840055369157945, guid: c41579fac2e37fd47bc8ad5aba716ca4, type: 3}
   damageNumberOffset: {x: 0, y: 1.8, z: 0}
   randomSpawnRadius: 0.5
+--- !u!114 &7937914154850460890
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5540324501335875313}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 739261aec670e66419845ee2e78af045, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  animator: {fileID: 2843924611049113428}
+  destroyDelay: 1.5
 --- !u!1 &7247868516103105196
 GameObject:
   m_ObjectHideFlags: 0
