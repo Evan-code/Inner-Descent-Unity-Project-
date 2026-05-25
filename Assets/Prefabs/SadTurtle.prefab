@@ -897,8 +897,8 @@ MonoBehaviour:
   damage: 2
   faceSpeed: 100
   enableRoaming: 1
-  roamRadius: 20
-  roamWaitTime: 0
+  roamRadius: 6
+  roamWaitTime: 2
 --- !u!114 &6241386896147315801
 MonoBehaviour:
   m_ObjectHideFlags: 0

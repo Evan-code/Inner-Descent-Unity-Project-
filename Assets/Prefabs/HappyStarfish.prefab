@@ -586,8 +586,8 @@ MonoBehaviour:
   attackCooldown: 1.5
   faceSpeed: 100
   enableRoaming: 1
-  roamRadius: 20
-  roamWaitTime: 0
+  roamRadius: 6
+  roamWaitTime: 2
 --- !u!1 &2408664906258127341
 GameObject:
   m_ObjectHideFlags: 0
