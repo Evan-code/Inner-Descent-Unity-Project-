@@ -451,7 +451,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ec299ff5abd5d4547a2fe266b51986a0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHP: 7
+  maxHP: 10
   currentHP: 0
   destroyOnDeath: 0
 --- !u!136 &8821680161846393830
@@ -581,13 +581,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   detectionRange: 15
   shootRange: 13
-  retreatRange: 6
+  retreatRange: 10
   retreatDistance: 13
   attackCooldown: 1.5
   faceSpeed: 100
   enableRoaming: 1
-  roamRadius: 6
-  roamWaitTime: 2
+  roamRadius: 20
+  roamWaitTime: 0
 --- !u!1 &2408664906258127341
 GameObject:
   m_ObjectHideFlags: 0
@@ -1742,6 +1742,10 @@ PrefabInstance:
       propertyPath: targetHealth
       value: 
       objectReference: {fileID: 6442814295854229023}
+    - target: {fileID: 6730477263376789015, guid: d972963ea41aaa24f93fd86f5f6211c5, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: f8c20fafe765b454d8bbb9535f423541, type: 3}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
