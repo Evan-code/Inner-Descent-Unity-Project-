@@ -20,5 +20,8 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Rooms/Square Room.unity
     guid: c46c3801ceb500940ad0d8d71b85c952
+  - enabled: 1
+    path: Assets/Scenes/Tutorial.unity
+    guid: 9e8e5b345cf549c44827dbe70bbf07c4
   m_configObjects: {}
   m_UseUCBPForAssetBundles: 0

@@ -1,7 +1,6 @@
 // These are "using" statements that let us use built-in Unity and C# features
 using System.Collections.Generic; // Lets us use lists (like arrays that can grow/shrink)
 using UnityEngine;                // Core Unity functionality
-using UnityEngine.SceneManagement; // Lets us switch between scenes
 using UnityEngine.UI;             // Lets us use UI elements like buttons
 using TMPro;                      // TextMeshPro (better text system in Unity)
 
@@ -166,9 +165,24 @@ public class UpgradeOverlayManager : MonoBehaviour
 
         Debug.Log("Player picked upgrade: " + chosenUpgrade.title);
 
+        // Unpause the game before changing scenes
         Time.timeScale = 1f;
 
-        SceneManager.LoadScene(nextSceneName);
+        // Hide the upgrade overlay so it does not sit on screen during the fade
+        if (upgradeOverlay != null)
+        {
+            upgradeOverlay.SetActive(false);
+        }
+
+        // Use the fade transition manager instead of instantly loading the scene
+        if (SceneTransitionManager.Instance != null)
+        {
+            SceneTransitionManager.Instance.LoadSceneWithFade(nextSceneName);
+        }
+        else
+        {
+            Debug.LogError("No SceneTransitionManager found in the scene.");
+        }
     }
 
     void SavePlayerHealthBeforeChangingScene()
