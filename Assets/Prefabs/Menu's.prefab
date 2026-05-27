@@ -578,7 +578,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   tutorialSceneName: Tutorial
   mainMenuSceneName: MainMenu
-  squareRoomSceneName: SquareRoom
+  squareRoomSceneName: Square Room
 --- !u!1 &3244341178281101816
 GameObject:
   m_ObjectHideFlags: 0
