@@ -1660,7 +1660,7 @@ MonoBehaviour:
   - {fileID: 958474680}
   - {fileID: 958474679}
   - {fileID: 958474678}
-  nextSceneName: Square Room
+  nextSceneName: Victory
 --- !u!4 &364350110
 Transform:
   m_ObjectHideFlags: 0
@@ -4294,6 +4294,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 817915767682881182, guid: 961bdf6e121dacf45ad7392347fbd8ac, type: 3}
+      propertyPath: m_Color.a
+      value: 0.93333334
+      objectReference: {fileID: 0}
     - target: {fileID: 3244341178281101816, guid: 961bdf6e121dacf45ad7392347fbd8ac, type: 3}
       propertyPath: m_Name
       value: Menu's
@@ -4376,6 +4380,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3358781524790258148, guid: 961bdf6e121dacf45ad7392347fbd8ac, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7190926247300613515, guid: 961bdf6e121dacf45ad7392347fbd8ac, type: 3}
+      propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []

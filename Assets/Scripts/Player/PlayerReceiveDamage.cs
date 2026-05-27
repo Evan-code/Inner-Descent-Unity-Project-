@@ -19,6 +19,8 @@ public class PlayerReceiveDamage : MonoBehaviour
     [SerializeField] private float shakeStrength = 0.25f;
 
     private bool isInvulnerable = false;
+    private bool dashInvincible = false;
+
     private Color[] originalColors;
 
     void Awake()
@@ -49,6 +51,11 @@ public class PlayerReceiveDamage : MonoBehaviour
 
     public void Hit(int damage)
     {
+        if (dashInvincible)
+        {
+            return;
+        }
+
         if (isInvulnerable || health == null)
         {
             return;
@@ -56,15 +63,22 @@ public class PlayerReceiveDamage : MonoBehaviour
 
         health.TakeDamage(damage);
 
-        if (ScreenShake.Instance != null)
-        {
-            ScreenShake.Instance.Shake(shakeDuration, shakeStrength);
-        }
-
+        // Only shake and start normal invulnerability if the player survived the hit.
+        // This prevents screen shake from happening on death.
         if (health.currentHP > 0)
         {
+            if (ScreenShake.Instance != null)
+            {
+                ScreenShake.Instance.Shake(shakeDuration, shakeStrength);
+            }
+
             StartCoroutine(InvulnerabilityCoroutine());
         }
+    }
+
+    public void SetDashInvincible(bool value)
+    {
+        dashInvincible = value;
     }
 
     private IEnumerator InvulnerabilityCoroutine()

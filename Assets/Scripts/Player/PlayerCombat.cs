@@ -210,6 +210,42 @@ public class PlayerCombat : MonoBehaviour
         Gizmos.matrix = oldMatrix;
     }
 
+    public void ResetComboFromDash()
+    {
+        attackId++;
+
+        comboStep = 0;
+        lastAttackTime = -999f;
+
+        // Allows attacking right after dash, but resets back to Attack1.
+        nextAttackTime = Time.time;
+
+        isAttacking = false;
+        attackSlowTimer = 0f;
+
+        if (attackRoutine != null)
+        {
+            StopCoroutine(attackRoutine);
+            attackRoutine = null;
+        }
+
+        if (animator != null)
+        {
+            animator.ResetTrigger("Attack1");
+            animator.ResetTrigger("Attack2");
+            animator.ResetTrigger("Attack3");
+        }
+
+        if (attack1VFX != null)
+            attack1VFX.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+
+        if (attack2VFX != null)
+            attack2VFX.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+
+        if (attack3VFX != null)
+            attack3VFX.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+    }
+
     public void SetDamage(int newDamage) => damage = newDamage;
     public int GetDamage() => damage;
 

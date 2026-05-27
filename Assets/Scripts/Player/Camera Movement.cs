@@ -1,10 +1,9 @@
-using System.Collections;           
-using System.Collections.Generic;    
-using UnityEngine;                   
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
 
-
-public class SmoothCameraFollow : MonoBehaviour {
-    
+public class SmoothCameraFollow : MonoBehaviour
+{
     // A Vector3 stores a position or direction in 3D space (x, y, z)
     // and offset will store the distance between the camera and the object it follows
     private Vector3 offset;
@@ -26,15 +25,23 @@ public class SmoothCameraFollow : MonoBehaviour {
     // camera position = (0,10,-10)
     // player position = (0,0,0)
     // offset becomes (0,10,-10)
-    private void Awake() {
+    private void Awake()
+    {
+        // If there is no target assigned, don't try to calculate offset
+        if (target == null)
+            return;
+
         // Calculate the distance between the camera and the object it will follow
         offset = transform.position - target.position;
     }
 
-
     // LateUpdate() runs once every frame, but AFTER all Update() functions finish
     // and cameras often use LateUpdate so they follow the object AFTER it has moved
-    private void LateUpdate() {
+    private void LateUpdate()
+    {
+        // If the target was destroyed, stop trying to follow it
+        if (target == null)
+            return;
 
         // It takes the target's current position and adds the original offset
         // This keeps the camera the same distance away from the target

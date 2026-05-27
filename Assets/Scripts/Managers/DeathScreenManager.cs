@@ -8,6 +8,7 @@ public class DeathScreenManager : MonoBehaviour
 
     [Header("Scene Names")]
     [SerializeField] private string mainMenuSceneName = "MainMenu";
+    [SerializeField] private string SquareRoomSceneName = "Square Room";
 
     private Health playerHealth;
 
@@ -55,7 +56,7 @@ public class DeathScreenManager : MonoBehaviour
 
         PlayerRunData.ResetRun();
 
-        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        SceneManager.LoadScene(SquareRoomSceneName);
     }
 
     public void StartOver()

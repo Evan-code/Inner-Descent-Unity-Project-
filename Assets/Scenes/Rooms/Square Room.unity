@@ -5142,14 +5142,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 95366935925402313, guid: 961bdf6e121dacf45ad7392347fbd8ac, type: 3}
-      propertyPath: m_SizeDelta.x
-      value: 110
-      objectReference: {fileID: 0}
     - target: {fileID: 1216632227543127108, guid: 961bdf6e121dacf45ad7392347fbd8ac, type: 3}
       propertyPath: playerHealth
       value: 
       objectReference: {fileID: 1886206490}
+    - target: {fileID: 1216632227543127108, guid: 961bdf6e121dacf45ad7392347fbd8ac, type: 3}
+      propertyPath: whiteDamageImage
+      value: 
+      objectReference: {fileID: 2721388600033535647}
     - target: {fileID: 3244341178281101816, guid: 961bdf6e121dacf45ad7392347fbd8ac, type: 3}
       propertyPath: m_Name
       value: Menu's
@@ -5234,19 +5234,22 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 3978213123028081764, guid: 961bdf6e121dacf45ad7392347fbd8ac, type: 3}
-      propertyPath: m_SizeDelta.x
-      value: 110
-      objectReference: {fileID: 0}
-    - target: {fileID: 4839968752017871765, guid: 961bdf6e121dacf45ad7392347fbd8ac, type: 3}
-      propertyPath: m_SizeDelta.x
-      value: 110
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 961bdf6e121dacf45ad7392347fbd8ac, type: 3}
+--- !u!114 &2721388600033535647 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 3164580894603193102, guid: 961bdf6e121dacf45ad7392347fbd8ac, type: 3}
+  m_PrefabInstance: {fileID: 2721388600033535646}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &4128292227583218698
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -5255,18 +5258,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 968294256676757944, guid: 714a5a803caaf3342bbefd922a2bd8e8, type: 3}
-      propertyPath: far clip plane
-      value: 60
-      objectReference: {fileID: 0}
-    - target: {fileID: 2742970285032115474, guid: 714a5a803caaf3342bbefd922a2bd8e8, type: 3}
-      propertyPath: attackCooldown
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 4928245661239599010, guid: 714a5a803caaf3342bbefd922a2bd8e8, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0.85
-      objectReference: {fileID: 0}
     - target: {fileID: 6525926607737379376, guid: 714a5a803caaf3342bbefd922a2bd8e8, type: 3}
       propertyPath: m_LocalPosition.x
       value: -4.3
@@ -5310,14 +5301,6 @@ PrefabInstance:
     - target: {fileID: 8195491960449470306, guid: 714a5a803caaf3342bbefd922a2bd8e8, type: 3}
       propertyPath: m_Name
       value: Player
-      objectReference: {fileID: 0}
-    - target: {fileID: 8195491960449470306, guid: 714a5a803caaf3342bbefd922a2bd8e8, type: 3}
-      propertyPath: m_Layer
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8195491960449470306, guid: 714a5a803caaf3342bbefd922a2bd8e8, type: 3}
-      propertyPath: m_TagString
-      value: Untagged
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -5405,10 +5388,6 @@ PrefabInstance:
     - target: {fileID: 4423833892725748076, guid: d4c7771f78f57094aa5df5d462658127, type: 3}
       propertyPath: m_Name
       value: Transitions
-      objectReference: {fileID: 0}
-    - target: {fileID: 4423833892725748076, guid: d4c7771f78f57094aa5df5d462658127, type: 3}
-      propertyPath: m_IsActive
-      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

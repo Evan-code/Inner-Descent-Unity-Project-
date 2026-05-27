@@ -4,6 +4,8 @@ using UnityEngine;
 public class PlayerDash : MonoBehaviour
 {
     private PlayerMovement moveScript;
+    private PlayerCombat combatScript;
+    private PlayerReceiveDamage receiveDamageScript;
     private Transform cam;
     private Rigidbody rb;
 
@@ -26,6 +28,8 @@ public class PlayerDash : MonoBehaviour
     void Start()
     {
         moveScript = GetComponent<PlayerMovement>();
+        combatScript = GetComponent<PlayerCombat>();
+        receiveDamageScript = GetComponent<PlayerReceiveDamage>();
         rb = GetComponent<Rigidbody>();
 
         if (Camera.main != null)
@@ -55,6 +59,18 @@ public class PlayerDash : MonoBehaviour
             yield break;
 
         canDash = false;
+
+        // Reset combo immediately when dash starts.
+        if (combatScript != null)
+        {
+            combatScript.ResetComboFromDash();
+        }
+
+        // Make player invincible during dash only.
+        if (receiveDamageScript != null)
+        {
+            receiveDamageScript.SetDashInvincible(true);
+        }
 
         if (moveScript != null)
         {
@@ -152,6 +168,12 @@ public class PlayerDash : MonoBehaviour
         if (moveScript != null)
         {
             moveScript.IsDashing = false;
+        }
+
+        // Turn off dash invincibility once the dash movement ends.
+        if (receiveDamageScript != null)
+        {
+            receiveDamageScript.SetDashInvincible(false);
         }
 
         yield return new WaitForSeconds(dashCooldown);

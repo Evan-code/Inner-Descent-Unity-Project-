@@ -6686,6 +6686,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1216632227543127108, guid: 961bdf6e121dacf45ad7392347fbd8ac, type: 3}
+      propertyPath: playerHealth
+      value: 
+      objectReference: {fileID: 1833748794}
     - target: {fileID: 3244341178281101816, guid: 961bdf6e121dacf45ad7392347fbd8ac, type: 3}
       propertyPath: m_Name
       value: Menu's
@@ -8286,6 +8290,17 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 714a5a803caaf3342bbefd922a2bd8e8, type: 3}
+--- !u!114 &1833748794 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8321248629147718853, guid: 714a5a803caaf3342bbefd922a2bd8e8, type: 3}
+  m_PrefabInstance: {fileID: 1833748793}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ec299ff5abd5d4547a2fe266b51986a0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1868787927
 GameObject:
   m_ObjectHideFlags: 0

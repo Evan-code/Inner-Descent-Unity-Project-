@@ -1,91 +1,94 @@
+using System.Collections;
+using System.Reflection;
 using UnityEngine;
 
 public class PlayerUpgradeApplier : MonoBehaviour
 {
-    private Health health;
-    private PlayerCombat combat;
-    private PlayerMovement movement;
-    private PlayerDash dash;
-
-    private int baseMaxHP;
-    private int baseDamage;
-    private float baseMoveSpeed;
-    private float baseVerticalSpeed;
-    private float baseDashCooldown;
-    private float baseAttackCooldown;
-
-    void Awake()
+    private IEnumerator Start()
     {
-        health = GetComponent<Health>();
-        combat = GetComponent<PlayerCombat>();
-        movement = GetComponent<PlayerMovement>();
-        dash = GetComponent<PlayerDash>();
+        yield return new WaitForEndOfFrame();
 
-        if (health != null)
-        {
-            baseMaxHP = health.maxHP;
-        }
-
-        if (combat != null)
-        {
-            baseDamage = combat.GetDamage();
-            baseAttackCooldown = combat.GetAttackCooldown();
-        }
-
-        if (movement != null)
-        {
-            baseMoveSpeed = movement.GetMoveSpeed();
-            baseVerticalSpeed = movement.GetVerticalSpeed();
-        }
-
-        if (dash != null)
-        {
-            baseDashCooldown = dash.GetDashCooldown();
-        }
+        ApplyDamageUpgrade();
+        ApplyMoveSpeedUpgrade();
+        ApplyDashCooldownUpgrade();
+        ApplyAttackCooldownUpgrade();
+        LoadSavedHealth();
     }
 
-    void Start()
+    void ApplyDamageUpgrade()
     {
-        ApplyUpgrades();
+        PlayerCombat combat = GetComponent<PlayerCombat>();
+
+        if (combat == null)
+            return;
+
+        combat.SetDamage(combat.GetDamage() + PlayerRunData.bonusDamage);
     }
 
-    void ApplyUpgrades()
+    void ApplyMoveSpeedUpgrade()
     {
-        if (health != null)
+        PlayerMovement movement = GetComponent<PlayerMovement>();
+
+        if (movement == null)
+            return;
+
+        FieldInfo moveSpeedField = typeof(PlayerMovement).GetField(
+            "moveSpeed",
+            BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic
+        );
+
+        if (moveSpeedField == null)
         {
-            int newMaxHP = baseMaxHP + PlayerRunData.bonusMaxHP;
+            Debug.LogWarning("Could not find moveSpeed variable in PlayerMovement.");
+            return;
+        }
 
-            int newCurrentHP;
+        float currentMoveSpeed = (float)moveSpeedField.GetValue(movement);
+        moveSpeedField.SetValue(movement, currentMoveSpeed * PlayerRunData.moveSpeedMultiplier);
+    }
 
-            if (PlayerRunData.hasSavedHealth)
+    void ApplyDashCooldownUpgrade()
+    {
+        PlayerDash dash = GetComponent<PlayerDash>();
+
+        if (dash == null)
+            return;
+
+        dash.SetDashCooldown(dash.GetDashCooldown() * PlayerRunData.dashCooldownMultiplier);
+    }
+
+    void ApplyAttackCooldownUpgrade()
+    {
+        PlayerCombat combat = GetComponent<PlayerCombat>();
+
+        if (combat == null)
+            return;
+
+        combat.SetAttackCooldown(combat.GetAttackCooldown() * PlayerRunData.attackCooldownMultiplier);
+    }
+
+    void LoadSavedHealth()
+    {
+        Health health = GetComponent<Health>();
+
+        if (health == null)
+            return;
+
+        if (PlayerRunData.hasSavedHealth)
+        {
+            health.currentHP = PlayerRunData.savedHealth;
+
+            if (health.currentHP > health.maxHP)
             {
-                newCurrentHP = Mathf.Clamp(PlayerRunData.savedCurrentHP, 1, newMaxHP);
+                health.currentHP = health.maxHP;
             }
-            else
+
+            if (health.currentHP < 1)
             {
-                newCurrentHP = newMaxHP;
+                health.currentHP = 1;
             }
 
-            health.SetHealth(newCurrentHP, newMaxHP);
-        }
-
-        if (combat != null)
-        {
-            combat.SetDamage(baseDamage + PlayerRunData.bonusDamage);
-            combat.SetAttackCooldown(baseAttackCooldown * PlayerRunData.attackCooldownMultiplier);
-        }
-
-        if (movement != null)
-        {
-            movement.SetMovementSpeeds(
-                baseMoveSpeed * PlayerRunData.moveSpeedMultiplier,
-                baseVerticalSpeed * PlayerRunData.moveSpeedMultiplier
-            );
-        }
-
-        if (dash != null)
-        {
-            dash.SetDashCooldown(baseDashCooldown * PlayerRunData.dashCooldownMultiplier);
+            Debug.Log("Loaded saved health: " + health.currentHP);
         }
     }
 }

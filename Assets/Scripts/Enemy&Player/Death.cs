@@ -34,6 +34,11 @@ public class DieOnZero : MonoBehaviour
 
     IEnumerator DieRoutine()
     {
+        if (CompareTag("Player") && ScreenShake.Instance != null)
+        {
+            ScreenShake.Instance.StopShakeForever();
+        }
+        
         if (animator != null)
         {
             animator.SetTrigger("Die");

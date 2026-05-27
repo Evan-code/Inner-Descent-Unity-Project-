@@ -5508,6 +5508,17 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 714a5a803caaf3342bbefd922a2bd8e8, type: 3}
+--- !u!114 &1390921841 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8321248629147718853, guid: 714a5a803caaf3342bbefd922a2bd8e8, type: 3}
+  m_PrefabInstance: {fileID: 1390921840}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ec299ff5abd5d4547a2fe266b51986a0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1439250874
 GameObject:
   m_ObjectHideFlags: 0
@@ -6351,6 +6362,26 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 668735768885291391, guid: 91ad7bf144749b04ab484a680630a040, type: 3}
   m_PrefabInstance: {fileID: 1546638743}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1560634200 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3240654310327331309, guid: 961bdf6e121dacf45ad7392347fbd8ac, type: 3}
+  m_PrefabInstance: {fileID: 1897321651}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1560634203
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1560634200}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5ce10b6f0724b394c829ed160698067a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  tutorialSceneName: Tutorial
+  mainMenuSceneName: MainMenu
+  squareRoomSceneName: SquareRoom
 --- !u!1001 &1607437580
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -7711,6 +7742,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1216632227543127108, guid: 961bdf6e121dacf45ad7392347fbd8ac, type: 3}
+      propertyPath: playerHealth
+      value: 
+      objectReference: {fileID: 1390921841}
     - target: {fileID: 3244341178281101816, guid: 961bdf6e121dacf45ad7392347fbd8ac, type: 3}
       propertyPath: m_Name
       value: Menu's
@@ -7795,10 +7830,37 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4402417037623356969, guid: 961bdf6e121dacf45ad7392347fbd8ac, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 1560634203}
+    - target: {fileID: 4402417037623356969, guid: 961bdf6e121dacf45ad7392347fbd8ac, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: RestartAfterDeathButton
+      objectReference: {fileID: 0}
+    - target: {fileID: 4402417037623356969, guid: 961bdf6e121dacf45ad7392347fbd8ac, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: MainMenuButtons, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 5555054144649397049, guid: 961bdf6e121dacf45ad7392347fbd8ac, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 1560634203}
+    - target: {fileID: 5555054144649397049, guid: 961bdf6e121dacf45ad7392347fbd8ac, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: MainMenuAfterDeathButton
+      objectReference: {fileID: 0}
+    - target: {fileID: 5555054144649397049, guid: 961bdf6e121dacf45ad7392347fbd8ac, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: MainMenuButtons, Assembly-CSharp
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 3240654310327331309, guid: 961bdf6e121dacf45ad7392347fbd8ac, type: 3}
+      insertIndex: 1
+      addedObject: {fileID: 1560634203}
   m_SourcePrefab: {fileID: 100100000, guid: 961bdf6e121dacf45ad7392347fbd8ac, type: 3}
 --- !u!114 &1897321652 stripped
 MonoBehaviour:
