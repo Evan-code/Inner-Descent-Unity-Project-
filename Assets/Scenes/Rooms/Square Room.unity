@@ -521,8 +521,8 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 1357905603}
   - {fileID: 1618930644}
+  - {fileID: 1357905603}
   - {fileID: 364350110}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -3585,7 +3585,10 @@ MonoBehaviour:
   - {fileID: 2012999869440015121, guid: 4960037ae912cfa4ba64a698e0bdba7c, type: 3}
   - {fileID: 7087627236624983637, guid: 9a75614b33517e946a55f20fc5c6317c, type: 3}
   - {fileID: 5540324501335875313, guid: 56acbfeabb57ff64b98faa20bd8ff1e1, type: 3}
-  enemiesToSpawn: 6
+  enemiesToSpawn: 8
+  bossSpawnPoint: {fileID: 0}
+  bossPrefabs: []
+  spawnBoss: 0
 --- !u!4 &1618930644
 Transform:
   m_ObjectHideFlags: 0

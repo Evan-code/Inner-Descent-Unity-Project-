@@ -1,59 +1,46 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-public class SmoothCameraFollow : MonoBehaviour
-{
-    // A Vector3 stores a position or direction in 3D space (x, y, z)
-    // and offset will store the distance between the camera and the object it follows
+// This script makes the camera smoothly follow a target
+// Usually the target is the player
+public class SmoothCameraFollow : MonoBehaviour {
+    // This stores the starting distance between the camera and the target
     private Vector3 offset;
 
+    // This is the object the camera follows
     [SerializeField] private Transform target;
 
-    // smoothTime will control how smoothly the camera follows the target
-    // Smaller numbers = faster/snappier movement
-    // Larger numbers = slower/smoother movement
-    [SerializeField] private float smoothTime;
+    // Smaller smoothTime means faster camera movement
+    // Larger smoothTime means slower and smoother camera movement
+    [SerializeField] private float smoothTime = 0.15f;
 
-    // This stores the current velocity of the camera
-    // It's needed for the SmoothDamp thingy to keep track of how fast the camera is moving
-    // so Vector3.zero really just means (0,0,0)
-    private Vector3 _currentVelocity = Vector3.zero;
+    // SmoothDamp uses this to remember camera velocity while smoothing
+    private Vector3 currentVelocity = Vector3.zero;
 
-    // This calculates the starting distance between the camera and the target
-    // Example:
-    // camera position = (0,10,-10)
-    // player position = (0,0,0)
-    // offset becomes (0,10,-10)
-    private void Awake()
-    {
-        // If there is no target assigned, don't try to calculate offset
-        if (target == null)
+    private void Awake() {
+        // If no target was assigned, do nothing
+        if (target == null) {
             return;
+        }
 
-        // Calculate the distance between the camera and the object it will follow
+        // Calculate the starting distance between camera and target
         offset = transform.position - target.position;
     }
 
-    // LateUpdate() runs once every frame, but AFTER all Update() functions finish
-    // and cameras often use LateUpdate so they follow the object AFTER it has moved
-    private void LateUpdate()
-    {
-        // If the target was destroyed, stop trying to follow it
-        if (target == null)
+    private void LateUpdate() {
+        // If target is missing, do nothing
+        if (target == null) {
             return;
+        }
 
-        // It takes the target's current position and adds the original offset
-        // This keeps the camera the same distance away from the target
+        // The camera wants to be at the target position plus the offset
         Vector3 targetPosition = target.position + offset;
 
-        // SmoothDamp gradually moves the camera toward the target position
-        // and it creates smooth, natural camera movement instead of snapping instantly
-        // some parameters:
-        // 1) current camera position
-        // 2) desired camera position
-        // 3) reference to current velocity (needed for smoothing calculations)
-        // 4) how long it should take to smooth toward the target
-        transform.position = Vector3.SmoothDamp(transform.position, targetPosition, ref _currentVelocity, smoothTime);
+        // Smoothly move the camera toward the target position
+        transform.position = Vector3.SmoothDamp(
+            transform.position,
+            targetPosition,
+            ref currentVelocity,
+            smoothTime
+        );
     }
 }

@@ -1,20 +1,28 @@
 using UnityEngine;
 
-public class TutorialToGame : MonoBehaviour
-{
+// This script lets the player press Space in the tutorial to start the game
+public class TutorialToGame : MonoBehaviour {
     [Header("Next Scene")]
     public string nextSceneName = "Square Room";
 
+    // This prevents the player from pressing Space multiple times and loading twice
     private bool hasPressed = false;
 
-    void Update()
-    {
-        if (hasPressed) return;
+    void Update() {
+        // If Space was already pressed, do nothing
+        if (hasPressed) {
+            return;
+        }
 
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
+        // Checks if the player pressed Space
+        if (Input.GetKeyDown(KeyCode.Space)) {
+            // Mark that the player already pressed Space
             hasPressed = true;
-            SceneTransitionManager.Instance.LoadSceneWithFade(nextSceneName);
+
+            // If transition manager exists, load the next scene with fade
+            if (SceneTransitionManager.Instance != null) {
+                SceneTransitionManager.Instance.LoadSceneWithFade(nextSceneName);
+            }
         }
     }
 }

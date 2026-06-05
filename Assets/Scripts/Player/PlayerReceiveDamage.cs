@@ -1,9 +1,13 @@
 using System.Collections;
 using UnityEngine;
 
-public class PlayerReceiveDamage : MonoBehaviour
-{
+// This script handles the player getting hit
+// It takes damage, flashes the player, gives invincibility, and shakes the screen
+public class PlayerReceiveDamage : MonoBehaviour {
+    // Stores the Health script
     private Health health;
+
+    // Stores all renderers so the player can flash
     private Renderer[] renderers;
 
     [Header("Invincibility")]
@@ -18,129 +22,159 @@ public class PlayerReceiveDamage : MonoBehaviour
     [SerializeField] private float shakeDuration = 0.2f;
     [SerializeField] private float shakeStrength = 0.25f;
 
+    // True when the player has normal hit invincibility
     private bool isInvulnerable = false;
+
+    // True only while dashing
     private bool dashInvincible = false;
 
+    // Saves the original material colors
     private Color[] originalColors;
 
-    void Awake()
-    {
+    void Awake() {
+        // Gets the Health script on the player
         health = GetComponent<Health>();
+
+        // Gets all renderers on the player and child objects
         renderers = GetComponentsInChildren<Renderer>();
 
+        // Makes an array with one color slot for each renderer
         originalColors = new Color[renderers.Length];
 
-        for (int i = 0; i < renderers.Length; i++)
-        {
+        // Loops through all renderers
+        for (int i = 0; i < renderers.Length; i++) {
+            // Gets this renderer's material
             Material mat = renderers[i].material;
 
-            if (mat.HasProperty("_BaseColor"))
-            {
+            // If using URP/Lit shader, color is usually _BaseColor
+            if (mat.HasProperty("_BaseColor")) {
                 originalColors[i] = mat.GetColor("_BaseColor");
             }
-            else if (mat.HasProperty("_Color"))
-            {
+            // If using older shader, color is usually _Color
+            else if (mat.HasProperty("_Color")) {
                 originalColors[i] = mat.GetColor("_Color");
             }
-            else
-            {
+            // Backup color if the material does not have either property
+            else {
                 originalColors[i] = Color.white;
             }
         }
     }
 
-    public void Hit(int damage)
-    {
-        if (dashInvincible)
-        {
+    public void Hit(int damage) {
+        // If dashing, ignore the hit
+        if (dashInvincible) {
             return;
         }
 
-        if (isInvulnerable || health == null)
-        {
+        // If already invulnerable or missing Health, ignore the hit
+        if (isInvulnerable || health == null) {
             return;
         }
 
+        // Damage the player
         health.TakeDamage(damage);
 
-        // Only shake and start normal invulnerability if the player survived the hit.
-        // This prevents screen shake from happening on death.
-        if (health.currentHP > 0)
-        {
-            if (ScreenShake.Instance != null)
-            {
+        // Only do shake and invincibility if the player survived
+        if (health.currentHP > 0) {
+            // Shake the screen if ScreenShake exists
+            if (ScreenShake.Instance != null) {
                 ScreenShake.Instance.Shake(shakeDuration, shakeStrength);
             }
 
+            // Start the invincibility flashing
             StartCoroutine(InvulnerabilityCoroutine());
         }
     }
 
-    public void SetDashInvincible(bool value)
-    {
+    public void SetDashInvincible(bool value) {
+        // PlayerDash uses this to turn dash invincibility on or off
         dashInvincible = value;
     }
 
-    private IEnumerator InvulnerabilityCoroutine()
-    {
+    private IEnumerator InvulnerabilityCoroutine() {
+        // Player is now invulnerable
         isInvulnerable = true;
 
+        // Timer tracks how long invincibility has lasted
         float timer = 0f;
 
+        // Flash once quickly right after getting hit
         SetPlayerColor(flashColor);
+
+        // Wait for the first quick flash
         yield return new WaitForSeconds(initialFlashDuration);
+
+        // Restore normal color
         RestoreOriginalColors();
 
+        // Add the first flash time to timer
         timer += initialFlashDuration;
 
-        while (timer < invulnerabilityDuration)
-        {
+        // Keep blinking while invincibility is still active
+        while (timer < invulnerabilityDuration) {
+            // Set player to flash color
             SetPlayerColor(flashColor);
+
+            // Wait while flashed
             yield return new WaitForSeconds(slowFlashInterval);
 
+            // Restore normal color
             RestoreOriginalColors();
+
+            // Wait while normal color
             yield return new WaitForSeconds(slowFlashInterval);
 
+            // Add both wait times to timer
             timer += slowFlashInterval * 2f;
         }
 
+        // Make sure color is normal at the end
         RestoreOriginalColors();
+
+        // Player can now be hit again
         isInvulnerable = false;
     }
 
-    private void SetPlayerColor(Color color)
-    {
-        foreach (Renderer renderer in renderers)
-        {
-            if (renderer == null) continue;
+    private void SetPlayerColor(Color color) {
+        // Loops through all renderers
+        foreach (Renderer renderer in renderers) {
+            // If renderer is missing, skip it
+            if (renderer == null) {
+                continue;
+            }
 
+            // Gets the material on this renderer
             Material mat = renderer.material;
 
-            if (mat.HasProperty("_BaseColor"))
-            {
+            // Changes color for URP/Lit shader
+            if (mat.HasProperty("_BaseColor")) {
                 mat.SetColor("_BaseColor", color);
             }
-            else if (mat.HasProperty("_Color"))
-            {
+            // Changes color for older shaders
+            else if (mat.HasProperty("_Color")) {
                 mat.SetColor("_Color", color);
             }
         }
     }
 
-    private void RestoreOriginalColors()
-    {
-        for (int i = 0; i < renderers.Length; i++)
-        {
-            if (renderers[i] == null) continue;
+    private void RestoreOriginalColors() {
+        // Loops through all renderers using an index
+        for (int i = 0; i < renderers.Length; i++) {
+            // If renderer is missing, skip it
+            if (renderers[i] == null) {
+                continue;
+            }
 
+            // Gets the material on this renderer
             Material mat = renderers[i].material;
 
-            if (mat.HasProperty("_BaseColor"))
-            {
+            // Restores URP/Lit color
+            if (mat.HasProperty("_BaseColor")) {
                 mat.SetColor("_BaseColor", originalColors[i]);
             }
-            else if (mat.HasProperty("_Color"))
-            {
+            // Restores older shader color
+            else if (mat.HasProperty("_Color")) {
                 mat.SetColor("_Color", originalColors[i]);
             }
         }

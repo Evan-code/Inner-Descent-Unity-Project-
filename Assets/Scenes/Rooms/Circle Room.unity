@@ -8633,6 +8633,9 @@ MonoBehaviour:
   - {fileID: 2012999869440015121, guid: 4960037ae912cfa4ba64a698e0bdba7c, type: 3}
   - {fileID: 7087627236624983637, guid: 9a75614b33517e946a55f20fc5c6317c, type: 3}
   enemiesToSpawn: 6
+  bossSpawnPoint: {fileID: 0}
+  bossPrefabs: []
+  spawnBoss: 0
 --- !u!4 &1383466266
 Transform:
   m_ObjectHideFlags: 0

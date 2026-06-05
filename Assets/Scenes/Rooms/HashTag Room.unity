@@ -3419,58 +3419,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 41996a6ea1c51594381fbbe2d45b1187, type: 3}
---- !u!1 &777940283
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 777940284}
-  - component: {fileID: 777940285}
-  m_Layer: 0
-  m_Name: BossManager
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &777940284
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 777940283}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 34.621277, y: -26.976738, z: 29.446156}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 1482470864}
-  m_Father: {fileID: 1963383456}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &777940285
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 777940283}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c201ff163c3905c45afbd657693bcbbb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  spawnPoints:
-  - {fileID: 1482470864}
-  enemyPrefabs:
-  - {fileID: 5352454767698828753, guid: 1bf5a57a9a32997419823784376ce6e7, type: 3}
-  - {fileID: 2684150199756815039, guid: d01652b1dfdee6840bd1405b6903e680, type: 3}
-  - {fileID: 2069280579598158046, guid: 7b184afc8e7ab5c4e9afb42c3798f742, type: 3}
-  enemiesToSpawn: 1
 --- !u!1001 &791008310
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -6801,6 +6749,12 @@ MonoBehaviour:
   - {fileID: 7087627236624983637, guid: 9a75614b33517e946a55f20fc5c6317c, type: 3}
   - {fileID: 5540324501335875313, guid: 56acbfeabb57ff64b98faa20bd8ff1e1, type: 3}
   enemiesToSpawn: 10
+  bossSpawnPoint: {fileID: 1482470864}
+  bossPrefabs:
+  - {fileID: 2684150199756815039, guid: d01652b1dfdee6840bd1405b6903e680, type: 3}
+  - {fileID: 5352454767698828753, guid: 1bf5a57a9a32997419823784376ce6e7, type: 3}
+  - {fileID: 2069280579598158046, guid: 7b184afc8e7ab5c4e9afb42c3798f742, type: 3}
+  spawnBoss: 1
 --- !u!4 &1383466266
 Transform:
   m_ObjectHideFlags: 0
@@ -6817,6 +6771,7 @@ Transform:
   - {fileID: 1098189408}
   - {fileID: 418103718}
   - {fileID: 1802609415}
+  - {fileID: 1482470864}
   m_Father: {fileID: 1963383456}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1400576544
@@ -7284,7 +7239,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 777940284}
+  m_Father: {fileID: 1383466266}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!135 &1482470865
 SphereCollider:
@@ -8904,7 +8859,6 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1383466266}
-  - {fileID: 777940284}
   - {fileID: 1162197321}
   - {fileID: 364350110}
   m_Father: {fileID: 0}
